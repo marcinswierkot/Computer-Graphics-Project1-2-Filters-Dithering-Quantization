@@ -479,13 +479,6 @@ namespace Project1
                 }
             }
         }
-
-        private void Grayscale_Click(object sender, RoutedEventArgs e)
-        {
-            FilteredImage = ConvolutionalFilters.Grayscale(FilteredImage);
-            FilteredImageConverted = ConvertBitmapToBitmapImage.Convert(FilteredImage);
-            Image.Source = FilteredImageConverted;
-        }
     }
     public class ConvertBitmapToBitmapImage
     {
