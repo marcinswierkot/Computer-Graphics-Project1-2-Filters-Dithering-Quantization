@@ -296,7 +296,7 @@ namespace Project1
                 System.Windows.Point ClickedPlace = e.GetPosition(CanvasEditor);
                 if ((int)ClickedPlace.X <= 2)
                 {
-                    MessageBox.Show("test");
+                    //MessageBox.Show("test");
                     CirclePoints.RemoveAt(0);
                     CirclePoints.Insert(0, new System.Windows.Point(0, (int)ClickedPlace.Y));
                     ClearEllipses();
@@ -305,7 +305,7 @@ namespace Project1
                 }
                 else if ((int)ClickedPlace.X >= 251)
                 {
-                    MessageBox.Show("test2");
+                    //MessageBox.Show("test2");
                     CirclePoints.RemoveAt(CirclePoints.Count - 1);
                     CirclePoints.Add(new System.Windows.Point(255, (int)ClickedPlace.Y));
                     ClearEllipses();
@@ -314,7 +314,7 @@ namespace Project1
                 }
                 else
                 {
-                    MessageBox.Show("test3");
+                    //MessageBox.Show("test3");
                     for (int i = 1; i < CirclePoints.Count - 1; i++)
                     {
                         if (Math.Abs(CirclePoints[i].X - (int)ClickedPlace.X) <= 4 && Math.Abs(CirclePoints[i].Y - (int)ClickedPlace.Y) <= 4)
@@ -489,22 +489,8 @@ namespace Project1
     }
     public class ConvertBitmapToBitmapImage
     {
-        /// <summary>
-        /// Takes a bitmap and converts it to an image that can be handled by WPF ImageBrush
-        /// </summary>
-        /// <param name="src">A bitmap image</param>
-        /// <returns>The image as a BitmapImage for WPF</returns>
         public static BitmapImage Convert(Bitmap src)
         {
-            //MemoryStream ms = new MemoryStream();
-            //((System.Drawing.Bitmap)src).Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
-            //BitmapImage image = new BitmapImage();
-            //image.BeginInit();
-            //ms.Seek(0, SeekOrigin.Begin);
-            //image.StreamSource = ms;
-            //image.EndInit();
-            //return image;
-
             using (MemoryStream memory = new MemoryStream())
             {
                 src.Save(memory, System.Drawing.Imaging.ImageFormat.Bmp);

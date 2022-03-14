@@ -12,7 +12,7 @@ namespace Project1
 
         public static int ContrastCoefficient = 100;
 
-        public static double GammaCoefficient = 0.25;
+        public static double GammaCoefficient = 0.5;
 
         public static int[,] BlurKernel = new int[3, 3]
         {
