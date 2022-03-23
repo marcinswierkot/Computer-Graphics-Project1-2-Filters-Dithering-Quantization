@@ -24,11 +24,42 @@
             </Style.Resources>
             <Setter Property="Margin" Value="0,0,0,5"/>
         </Style>
+
+        <Style TargetType="{x:Type TabControl}" x:Key="TabControlWithoutBorder">
+            <Setter Property="OverridesDefaultStyle" Value="True" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TabControl}">
+                        <Grid KeyboardNavigation.TabNavigation="Local">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <TabPanel Name="HeaderPanel" Grid.Row="0" Panel.ZIndex="1" Margin="0,0,4,-1" IsItemsHost="True"
+                                KeyboardNavigation.TabIndex="1" Background="Transparent"/>
+                            <Border Name="Border" Grid.Row="1" Background="White" BorderBrush="Transparent" BorderThickness="1" 
+                                CornerRadius="2" KeyboardNavigation.TabNavigation="Local" KeyboardNavigation.DirectionalNavigation="Contained"
+                                    KeyboardNavigation.TabIndex="2"/>
+                            <ContentPresenter Name="PART_SelectedContentHost" Margin="4" ContentSource="SelectedContent" />
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Foreground" Value="Gray" />
+                                <Setter TargetName="Border" Property="BorderBrush" Value="Transparent" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
     </Window.Resources>
 
     <Window.CommandBindings>
         <CommandBinding Command="{x:Static local:MainWindow.LoadCommand}" Executed="LoadImage_Click"/>
         <CommandBinding Command="{x:Static local:MainWindow.SaveCommand}" Executed="SaveImage_Click"/>
+        <CommandBinding Command="{x:Static local:MainWindow.ReloadCommand}" Executed="ReloadImage_Click"/>
     </Window.CommandBindings>
 
     <DockPanel>
@@ -38,6 +69,7 @@
                 <MenuItem Command="{x:Static local:MainWindow.SaveCommand}"></MenuItem>
             </MenuItem>
             <MenuItem Header="About" x:Name="About" Click="About_Click"></MenuItem>
+            <MenuItem Command="{x:Static local:MainWindow.ReloadCommand}" x:Name="ReloadImage"/>
         </Menu>
         
         <Grid>
@@ -67,97 +99,177 @@
                 <Image x:Name="Image" Margin="7"/>
             </DockPanel>
 
-            <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
-                <StackPanel>
-                    <GroupBox Header="Functional Filters" VerticalAlignment="Top" Margin="0,0,5,5">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="1*"/>
-                                <ColumnDefinition Width="1*"/>
-                            </Grid.ColumnDefinitions>
-
-                            <StackPanel Margin="10">
-                                <Button Style="{DynamicResource MarginRoundButton}" x:Name="FuncInversion" 
-                                    Content="Inversion" Click="FuncInversion_Click" IsEnabled="False"/>
-                                <Button Style="{DynamicResource MarginRoundButton}" x:Name="FuncBrightnessCorrection" 
-                                    Content="Brightness Correction" Click="FuncBrightnessCorrection_Click" IsEnabled="False"/>
-                                <Button Style="{DynamicResource MarginRoundButton}" x:Name="FuncContrastEnhancement" 
-                                    Content="Contrast Enhancement" Click="FuncContrastEnhancement_Click" IsEnabled="False"/>
-                                <Button Style="{DynamicResource MarginRoundButton}" x:Name="FuncGammaCorrection" 
-                                    Content="Gamma Correction" Click="FuncGammaCorrection_Click" IsEnabled="False"/>
-                                <Button Style="{DynamicResource MarginRoundButton}" x:Name="FuncCustom1" 
-                                    Content="Custom 1" IsEnabled="False" Click="FuncCustom1_Click"/>
-                                <Button Style="{DynamicResource MarginRoundButton}" x:Name="FuncCustom2" 
-                                    Content="Custom 2" IsEnabled="False" Click="FuncCustom2_Click"/>
-                            </StackPanel>
-
-                            <StackPanel Margin="10" Grid.Column="1">
-                                <Button Style="{DynamicResource MarginRoundButton}" x:Name="EditFuncInversion" 
-                                    Content="Edit" Click="EditFuncInversion_Click"/>
-                                <Button Style="{DynamicResource MarginRoundButton}" x:Name="EditFuncBrightnessCorrection" 
-                                    Content="Edit" Click="EditFuncBrightnessCorrection_Click"/>
-                                <Button Style="{DynamicResource MarginRoundButton}" x:Name="EditFuncContrastEnhancement" 
-                                    Content="Edit" Click="EditFuncContrastEnhancement_Click"/>
-                                <Button Style="{DynamicResource MarginRoundButton}" x:Name="EditFuncGammaCorrection" 
-                                    Content="Edit" Click="EditFuncGammaCorrection_Click"/>
-                                <Button Style="{DynamicResource MarginRoundButton}" x:Name="DeleteFuncCustom1" 
-                                    Content="Delete" Visibility="Hidden" IsEnabled="False" Click="DeleteFuncCustom1_Click"/>
-                                <Button Style="{DynamicResource MarginRoundButton}" x:Name="DeleteFuncCustom2" 
-                                    Content="Delete" Visibility="Hidden" IsEnabled="False" Click="DeleteFuncCustom2_Click"/>
-                            </StackPanel>
-                        </Grid>
-                    </GroupBox>
-
-                    <GroupBox Header="Convolution Filters" VerticalAlignment="Top" Margin="0,0,5,0">
-                        <StackPanel Margin="10">
-                            <Button Style="{DynamicResource MarginRoundButton}" x:Name="ConvBlur" 
-                                Content="Blur" Click="ConvBlur_Click" IsEnabled="False"/>
-                            <Button Style="{DynamicResource MarginRoundButton}" x:Name="ConvGaussianBlur" 
-                                Content="Gaussian Blur" Click="ConvGaussianBlur_Click" IsEnabled="False"/>
-                            <Button Style="{DynamicResource MarginRoundButton}" x:Name="ConvSharpen" 
-                                Content="Sharpen" Click="ConvSharpen_Click" IsEnabled="False"/>
-                            <Button Style="{DynamicResource MarginRoundButton}" x:Name="ConvEdgeDetection" 
-                                Content="Edge Detection" Click="ConvEdgeDetection_Click" IsEnabled="False"/>
-                            <Button Style="{DynamicResource MarginRoundButton}" x:Name="ConvEmboss" 
-                                Content="Emboss" Click="ConvEmboss_Click" IsEnabled="False"/>
-                        </StackPanel>
-                    </GroupBox>
-
-                    <Button x:Name="ReloadImage" Style="{DynamicResource RoundButton}" Margin="5,15,5,10" 
-                        Content="Reload Image" Click="ReloadImage_Click" IsEnabled="False"/>
-
-                    <GroupBox Header="Functional Filters Editor" Margin="0,0,5,5">
+            <TabControl Grid.Column="1" Margin="5,5,5,5" SelectedIndex="1">
+                <TabItem Header="Project 1">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
                         <StackPanel>
-                            <Canvas x:Name="CanvasEditor" Width="256" Height="256" Margin="5,25,5,25" 
-                                MouseDown="CanvasEditor_MouseDown" Background="Transparent">
-                                <Polyline Points="0,0 0,255" Stroke="Black" StrokeThickness="3"/>
-                                <Polyline Points="0,255 255,255" Stroke="Black" StrokeThickness="3"/>
-                                <Polyline Name="MyPolyline" StrokeThickness="1" Stroke="Black"></Polyline>
-                                <TextBlock Canvas.Left="-25" Text="255"></TextBlock>
-                                <TextBlock Canvas.Left="-12" Canvas.Top="255" Text="0"></TextBlock>
-                                <TextBlock Canvas.Left="240" Canvas.Top="257" Text="255"></TextBlock>
-                            </Canvas>
+                            <GroupBox Header="Functional Filters" Margin="5,5,5,5">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="1*"/>
+                                        <ColumnDefinition Width="1*"/>
+                                    </Grid.ColumnDefinitions>
 
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="1*"/>
-                                    <ColumnDefinition Width="1*"/>
-                                </Grid.ColumnDefinitions>
+                                    <StackPanel Margin="10">
+                                        <Button Style="{DynamicResource MarginRoundButton}" x:Name="FuncInversion" 
+                                    Content="Inversion" Click="FuncInversion_Click" IsEnabled="False"/>
+                                        <Button Style="{DynamicResource MarginRoundButton}" x:Name="FuncBrightnessCorrection" 
+                                    Content="Brightness Correction" Click="FuncBrightnessCorrection_Click" IsEnabled="False"/>
+                                        <Button Style="{DynamicResource MarginRoundButton}" x:Name="FuncContrastEnhancement" 
+                                    Content="Contrast Enhancement" Click="FuncContrastEnhancement_Click" IsEnabled="False"/>
+                                        <Button Style="{DynamicResource MarginRoundButton}" x:Name="FuncGammaCorrection" 
+                                    Content="Gamma Correction" Click="FuncGammaCorrection_Click" IsEnabled="False"/>
+                                        <Button Style="{DynamicResource MarginRoundButton}" x:Name="FuncCustom1" 
+                                    Content="Custom 1" IsEnabled="False" Click="FuncCustom1_Click"/>
+                                        <Button Style="{DynamicResource MarginRoundButton}" x:Name="FuncCustom2" 
+                                    Content="Custom 2" IsEnabled="False" Click="FuncCustom2_Click"/>
+                                    </StackPanel>
 
+                                    <StackPanel Margin="10" Grid.Column="1">
+                                        <Button Style="{DynamicResource MarginRoundButton}" x:Name="EditFuncInversion" 
+                                    Content="Edit" Click="EditFuncInversion_Click"/>
+                                        <Button Style="{DynamicResource MarginRoundButton}" x:Name="EditFuncBrightnessCorrection" 
+                                    Content="Edit" Click="EditFuncBrightnessCorrection_Click"/>
+                                        <Button Style="{DynamicResource MarginRoundButton}" x:Name="EditFuncContrastEnhancement" 
+                                    Content="Edit" Click="EditFuncContrastEnhancement_Click"/>
+                                        <Button Style="{DynamicResource MarginRoundButton}" x:Name="EditFuncGammaCorrection" 
+                                    Content="Edit" Click="EditFuncGammaCorrection_Click"/>
+                                        <Button Style="{DynamicResource MarginRoundButton}" x:Name="DeleteFuncCustom1" 
+                                    Content="Delete" Visibility="Hidden" IsEnabled="False" Click="DeleteFuncCustom1_Click"/>
+                                        <Button Style="{DynamicResource MarginRoundButton}" x:Name="DeleteFuncCustom2" 
+                                    Content="Delete" Visibility="Hidden" IsEnabled="False" Click="DeleteFuncCustom2_Click"/>
+                                    </StackPanel>
+                                </Grid>
+                            </GroupBox>
+
+                            <GroupBox Header="Convolution Filters" Margin="5,5,5,5">
                                 <StackPanel Margin="10">
-                                    <Button x:Name="SaveFilterEditor" Style="{DynamicResource MarginRoundButton}" 
-                                        Content="Save" Click="SaveFilterEditor_Click"/>
+                                    <Button Style="{DynamicResource MarginRoundButton}" x:Name="ConvBlur" 
+                                Content="Blur" Click="ConvBlur_Click" IsEnabled="False"/>
+                                    <Button Style="{DynamicResource MarginRoundButton}" x:Name="ConvGaussianBlur" 
+                                Content="Gaussian Blur" Click="ConvGaussianBlur_Click" IsEnabled="False"/>
+                                    <Button Style="{DynamicResource MarginRoundButton}" x:Name="ConvSharpen" 
+                                Content="Sharpen" Click="ConvSharpen_Click" IsEnabled="False"/>
+                                    <Button Style="{DynamicResource MarginRoundButton}" x:Name="ConvEdgeDetection" 
+                                Content="Edge Detection" Click="ConvEdgeDetection_Click" IsEnabled="False"/>
+                                    <Button Style="{DynamicResource MarginRoundButton}" x:Name="ConvEmboss" 
+                                Content="Emboss" Click="ConvEmboss_Click" IsEnabled="False"/>
                                 </StackPanel>
+                            </GroupBox>
 
-                                <StackPanel Margin="10" Grid.Column="1">
-                                    <Button x:Name="ResetFilterEditor" Style="{DynamicResource MarginRoundButton}" 
+                            <GroupBox Header="Functional Filters Editor" Margin="5,5,5,5">
+                                <StackPanel>
+                                    <Canvas x:Name="CanvasEditor" Width="256" Height="256" Margin="5,25,5,25" 
+                                MouseDown="CanvasEditor_MouseDown" Background="Transparent">
+                                        <Polyline Points="0,0 0,255" Stroke="Black" StrokeThickness="3"/>
+                                        <Polyline Points="0,255 255,255" Stroke="Black" StrokeThickness="3"/>
+                                        <Polyline Name="MyPolyline" StrokeThickness="1" Stroke="Black"></Polyline>
+                                        <TextBlock Canvas.Left="-25" Text="255"></TextBlock>
+                                        <TextBlock Canvas.Left="-12" Canvas.Top="255" Text="0"></TextBlock>
+                                        <TextBlock Canvas.Left="240" Canvas.Top="257" Text="255"></TextBlock>
+                                    </Canvas>
+
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="1*"/>
+                                            <ColumnDefinition Width="1*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <StackPanel Margin="10">
+                                            <Button x:Name="SaveFilterEditor" Style="{DynamicResource MarginRoundButton}" 
+                                        Content="Save" Click="SaveFilterEditor_Click"/>
+                                        </StackPanel>
+
+                                        <StackPanel Margin="10" Grid.Column="1">
+                                            <Button x:Name="ResetFilterEditor" Style="{DynamicResource MarginRoundButton}" 
                                         Content="Reset" Click="ResetFilterEditor_Click"/>
+                                        </StackPanel>
+                                    </Grid>
                                 </StackPanel>
-                            </Grid>
+                            </GroupBox>
                         </StackPanel>
-                    </GroupBox>
-                </StackPanel>
-            </ScrollViewer>
+                    </ScrollViewer>
+                </TabItem>
+                <TabItem Header="Project 2">
+                    <StackPanel>
+                        <GroupBox Header="Grayscale" Margin="5,5,5,5">
+                            <StackPanel Margin="10">
+                                <Button Style="{DynamicResource MarginRoundButton}" x:Name="Grayscale" 
+                                Content="Convert to Grayscale" Click="Grayscale_Click" IsEnabled="False"/>
+                            </StackPanel>
+                        </GroupBox>
+
+                        <GroupBox Header="Average Dithering" Margin="5,5,5,5">
+                            <TabControl Margin="10" BorderThickness="0" Name="ChooseBetweenGrayAndColor" SelectedIndex="1">
+                                <TabItem Header="Grayscale">
+                                    <StackPanel Margin="0,10,0,0">
+                                        <TextBlock Margin="15,5,0,5">Number of shades of grey in a resulting image</TextBlock>
+                                        
+                                        <DockPanel Margin="15,5,15,15">
+                                            <TextBox Text="{Binding ElementName=sliderDitheringGray, Path=Value, UpdateSourceTrigger=PropertyChanged}" 
+                                                DockPanel.Dock="Right" TextAlignment="Center" Width="40" Margin="5,0,0,0"/>
+                                            <Slider Value="2" Maximum="16" TickPlacement="BottomRight" TickFrequency="2" 
+                                                IsSnapToTickEnabled="True" Name="sliderDitheringGray"/>
+                                        </DockPanel>
+                                        
+                                        <Button Style="{DynamicResource MarginRoundButton}" x:Name="AverageDitheringGray" 
+                                            Content="Apply Average Dithering Algorithm" Click="AverageDitheringGray_Click" IsEnabled="False"/>
+                                    </StackPanel>
+                                </TabItem>
+                                
+                                <TabItem Header="Color">
+                                    <StackPanel Margin="0,10,0,0">
+                                        <TextBlock Margin="15,5,0,5">Number of color values per channel in a resulting image</TextBlock>
+                                        
+                                        <DockPanel Margin="15,5,15,15">
+                                            <TextBlock DockPanel.Dock="Left" Margin="0,0,5,0">Red</TextBlock>
+                                            <TextBox Text="{Binding ElementName=sliderDitheringColorRed, Path=Value, UpdateSourceTrigger=PropertyChanged}" 
+                                             DockPanel.Dock="Right" TextAlignment="Center" Width="40" Margin="5,0,0,0"/>
+                                            <Slider Value="2" Maximum="16" TickPlacement="BottomRight" TickFrequency="2" 
+                                                    IsSnapToTickEnabled="True" Name="sliderDitheringColorRed"/>
+                                        </DockPanel>
+
+                                        <DockPanel Margin="15,5,15,15">
+                                            <TextBlock DockPanel.Dock="Left" Margin="0,0,5,0">Green</TextBlock>
+                                            <TextBox Text="{Binding ElementName=sliderDitheringColorGreen, Path=Value, UpdateSourceTrigger=PropertyChanged}" 
+                                             DockPanel.Dock="Right" TextAlignment="Center" Width="40" Margin="5,0,0,0"/>
+                                            <Slider Value="2" Maximum="16" TickPlacement="BottomRight" TickFrequency="2" 
+                                                    IsSnapToTickEnabled="True" Name="sliderDitheringColorGreen"/>
+                                        </DockPanel>
+
+                                        <DockPanel Margin="15,5,15,15">
+                                            <TextBlock DockPanel.Dock="Left" Margin="0,0,5,0">Blue</TextBlock>
+                                            <TextBox Text="{Binding ElementName=sliderDitheringColorBlue, Path=Value, UpdateSourceTrigger=PropertyChanged}" 
+                                             DockPanel.Dock="Right" TextAlignment="Center" Width="40" Margin="5,0,0,0"/>
+                                            <Slider Value="2" Maximum="16" TickPlacement="BottomRight" TickFrequency="2" 
+                                                    IsSnapToTickEnabled="True" Name="sliderDitheringColorBlue"/>
+                                        </DockPanel> 
+                                        
+                                        <Button Style="{DynamicResource MarginRoundButton}" x:Name="AverageDitheringColor" 
+                                            Content="Apply Average Dithering Algorithm" Click="AverageDitheringColor_Click" IsEnabled="False"/>
+                                    </StackPanel>
+                                </TabItem>
+                            </TabControl>
+                        </GroupBox>
+
+                        <GroupBox Header="Median Cut" Margin="5,5,5,5">
+                            <StackPanel Margin="10">
+                                <TextBlock Margin="15,5,0,5">Number of colors in a resulting image</TextBlock>
+                                
+                                <DockPanel Margin="15,5,15,15">
+                                    <TextBox Text="{Binding ElementName=sliderMedian, Path=Value, UpdateSourceTrigger=PropertyChanged}" 
+                                        DockPanel.Dock="Right" TextAlignment="Center" Width="40" Margin="5,0,0,0"/>
+                                    <Slider Value="2" Maximum="128" TickPlacement="BottomRight" TickFrequency="2" 
+                                        IsSnapToTickEnabled="True" Name="sliderMedian"/>
+                                </DockPanel>
+                                
+                                <Button Style="{DynamicResource MarginRoundButton}" x:Name="MedianCut" 
+                                    Content="Apply Median Cut Algorithm" Click="MedianCut_Click" IsEnabled="False"/>
+                            </StackPanel>
+                        </GroupBox>
+                    </StackPanel>
+                </TabItem>
+            </TabControl>
         </Grid>
     </DockPanel>
 </Window>

@@ -37,6 +37,11 @@ namespace Project1
                 new KeyGesture(Key.S, ModifierKeys.Control)
            }));
 
+        public static readonly RoutedCommand ReloadCommand = new RoutedUICommand("Reload Image", "ReloadCommand", typeof(MainWindow), new InputGestureCollection(new InputGesture[]
+          {
+                new KeyGesture(Key.R, ModifierKeys.Control)
+          }));
+
         public Bitmap OriginalImage { get; set; }
         public Bitmap FilteredImage { get; set; }
         public BitmapImage FilteredImageConverted { get; set; }
@@ -101,6 +106,10 @@ namespace Project1
             ReloadImage.IsEnabled = true;
             OriginalImageButton.IsEnabled = true;
             FilteredImageButton.IsEnabled = true;
+            Grayscale.IsEnabled = true;
+            AverageDitheringGray.IsEnabled = true;
+            AverageDitheringColor.IsEnabled = true;
+            MedianCut.IsEnabled = true;
         }
 
         private void SaveImage_Click(object sender, RoutedEventArgs e)
@@ -182,6 +191,11 @@ namespace Project1
             FilteredImage = OriginalImage;
             FilteredImageConverted = OriginalImageConverted;
             Image.Source = FilteredImageConverted;
+            ChooseBetweenGrayAndColor.SelectedIndex = 1;
+            sliderDitheringGray.Value = 2;
+            sliderDitheringColorRed.Value = 2;
+            sliderDitheringColorGreen.Value = 2;
+            sliderDitheringColorBlue.Value = 2;
         }
 
         private void OriginalImageButton_Click(object sender, RoutedEventArgs e)
@@ -478,6 +492,43 @@ namespace Project1
                     CanvasEditor.Children.Remove(ellipse);
                 }
             }
+        }
+
+        private void Grayscale_Click(object sender, RoutedEventArgs e)
+        {
+            FilteredImage = Project1.Grayscale.ApplyGrayscale(FilteredImage);
+            FilteredImageConverted = ConvertBitmapToBitmapImage.Convert(FilteredImage);
+            Image.Source = FilteredImageConverted;
+            ChooseBetweenGrayAndColor.SelectedIndex = 0;
+        }
+
+        private void MedianCut_Click(object sender, RoutedEventArgs e)
+        {
+            int numColors = (int)sliderMedian.Value;
+            MedianCutAlgorithm medianCut = new MedianCutAlgorithm(numColors);
+            FilteredImage = medianCut.ApplyMedianCut(FilteredImage);
+            FilteredImageConverted = ConvertBitmapToBitmapImage.Convert(FilteredImage);
+            Image.Source = FilteredImageConverted;
+        }
+
+        private void AverageDitheringGray_Click(object sender, RoutedEventArgs e)
+        {
+            int numColors = (int)sliderDitheringGray.Value;
+            AverageDitheringAlgorithm averageDithering = new AverageDitheringAlgorithm(numColors, numColors, numColors);
+            FilteredImage = averageDithering.ApplyAverageDithering(FilteredImage);
+            FilteredImageConverted = ConvertBitmapToBitmapImage.Convert(FilteredImage);
+            Image.Source = FilteredImageConverted;
+        }
+
+        private void AverageDitheringColor_Click(object sender, RoutedEventArgs e)
+        {
+            int numRedColors = (int)sliderDitheringColorRed.Value;
+            int numGreenColors = (int)sliderDitheringColorGreen.Value;
+            int numBlueColors = (int)sliderDitheringColorBlue.Value;
+            AverageDitheringAlgorithm averageDithering = new AverageDitheringAlgorithm(numRedColors, numGreenColors, numBlueColors);
+            FilteredImage = averageDithering.ApplyAverageDithering(FilteredImage);
+            FilteredImageConverted = ConvertBitmapToBitmapImage.Convert(FilteredImage);
+            Image.Source = FilteredImageConverted;
         }
     }
     public class ConvertBitmapToBitmapImage

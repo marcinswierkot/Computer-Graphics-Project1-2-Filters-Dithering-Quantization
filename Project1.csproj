@@ -67,7 +67,9 @@
     </Compile>
     <Compile Include="Constants.cs" />
     <Compile Include="ConvolutionalFilters.cs" />
+    <Compile Include="AverageDitheringAlgorithm.cs" />
     <Compile Include="FunctionalFilters.cs" />
+    <Compile Include="Grayscale.cs" />
     <Compile Include="Kernel.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -75,6 +77,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MedianCut.cs" />
+    <Compile Include="MedianCutAlgorithm.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
