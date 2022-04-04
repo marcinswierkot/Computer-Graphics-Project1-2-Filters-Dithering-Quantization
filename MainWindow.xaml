@@ -259,7 +259,7 @@
                                 <DockPanel Margin="15,5,15,15">
                                     <TextBox Text="{Binding ElementName=sliderMedian, Path=Value, UpdateSourceTrigger=PropertyChanged}" 
                                         DockPanel.Dock="Right" TextAlignment="Center" Width="40" Margin="5,0,0,0"/>
-                                    <Slider Value="2" Maximum="128" TickPlacement="BottomRight" TickFrequency="2" 
+                                    <Slider Value="2" Maximum="256" TickPlacement="BottomRight" TickFrequency="2" 
                                         IsSnapToTickEnabled="True" Name="sliderMedian"/>
                                 </DockPanel>
                                 

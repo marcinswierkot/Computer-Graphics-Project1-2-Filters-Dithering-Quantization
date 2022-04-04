@@ -196,6 +196,7 @@ namespace Project1
             sliderDitheringColorRed.Value = 2;
             sliderDitheringColorGreen.Value = 2;
             sliderDitheringColorBlue.Value = 2;
+            sliderMedian.Value = 2;
         }
 
         private void OriginalImageButton_Click(object sender, RoutedEventArgs e)
@@ -509,6 +510,7 @@ namespace Project1
             FilteredImage = medianCut.ApplyMedianCut(FilteredImage);
             FilteredImageConverted = ConvertBitmapToBitmapImage.Convert(FilteredImage);
             Image.Source = FilteredImageConverted;
+            //MessageBox.Show("Test");
         }
 
         private void AverageDitheringGray_Click(object sender, RoutedEventArgs e)
@@ -518,6 +520,7 @@ namespace Project1
             FilteredImage = averageDithering.ApplyAverageDithering(FilteredImage);
             FilteredImageConverted = ConvertBitmapToBitmapImage.Convert(FilteredImage);
             Image.Source = FilteredImageConverted;
+            //MessageBox.Show("Test");
         }
 
         private void AverageDitheringColor_Click(object sender, RoutedEventArgs e)
@@ -529,6 +532,7 @@ namespace Project1
             FilteredImage = averageDithering.ApplyAverageDithering(FilteredImage);
             FilteredImageConverted = ConvertBitmapToBitmapImage.Convert(FilteredImage);
             Image.Source = FilteredImageConverted;
+            //MessageBox.Show("Test");
         }
     }
     public class ConvertBitmapToBitmapImage
