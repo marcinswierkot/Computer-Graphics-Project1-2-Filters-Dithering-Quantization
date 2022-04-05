@@ -183,4 +183,99 @@ namespace Project1
         }
 
     }
+    public class AverageDitheringAlgorithmGray
+    {
+        public byte[] pixelBuffer { get; set; }
+        public int numberGrayLevels { get; set; }
+        public List<byte> grayLevels { get; set; }
+        public List<byte> grayThreshold { get; set; }
+        public AverageDitheringAlgorithmGray(int numGray)
+        {
+            numberGrayLevels = numGray;
+            grayLevels = new List<byte>();
+            grayThreshold = new List<byte>();
+        }
+        public Bitmap ApplyAverageDithering(Bitmap sourceBitmap)
+        {
+            BitmapData sourceData = sourceBitmap.LockBits(new Rectangle(0, 0,
+                            sourceBitmap.Width, sourceBitmap.Height),
+                            ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+
+            pixelBuffer = new byte[sourceData.Stride * sourceData.Height];
+            Marshal.Copy(sourceData.Scan0, pixelBuffer, 0, pixelBuffer.Length);
+
+            sourceBitmap.UnlockBits(sourceData);
+            InitialiseColorLevelsGray();
+            EvaluateThresholdsGray();
+            AssignColorLevelsGray();
+
+            Bitmap resultBitmap = new Bitmap(sourceBitmap.Width, sourceBitmap.Height);
+
+            BitmapData resultData = resultBitmap.LockBits(new Rectangle(0, 0,
+                                    resultBitmap.Width, resultBitmap.Height),
+                                    ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
+
+            Marshal.Copy(pixelBuffer, 0, resultData.Scan0, pixelBuffer.Length);
+            resultBitmap.UnlockBits(resultData);
+
+            return resultBitmap;
+
+        }
+        public void InitialiseColorLevelsGray()
+        {
+            double splitPointGray = 255 / (numberGrayLevels - 1);
+
+            grayLevels.Add(0);
+            for (int i = 1; i < numberGrayLevels - 1; i++)
+                grayLevels.Add((byte)(splitPointGray * i));
+            grayLevels.Add(255);
+        }
+        public void EvaluateThresholdsGray()
+        {
+            for (int i = 0; i < numberGrayLevels - 1; i++)
+            {
+                int sumGray = 0;
+                int counterGray = 0;
+                for (int k = 0; k < pixelBuffer.Length; k += 4)
+                {
+                    if ((pixelBuffer[k + 2] >= grayLevels[i] && pixelBuffer[k + 2] < grayLevels[i + 1])
+                        || (pixelBuffer[k + 2] == grayLevels[i + 1] && i == numberGrayLevels - 2))
+                    {
+                        counterGray++;
+                        sumGray += pixelBuffer[k + 2];
+                    }
+                }
+                if (counterGray == 0)
+                    grayThreshold.Add(grayLevels[i]);
+                else
+                    grayThreshold.Add((byte)(sumGray / counterGray));
+            }
+        }
+        public void AssignColorLevelsGray()
+        {
+            for (int k = 0; k < pixelBuffer.Length; k += 4)
+            {
+                for (int i = 0; i < numberGrayLevels - 1; i++)
+                {
+                    if ((pixelBuffer[k + 2] >= grayLevels[i] && pixelBuffer[k + 2] < grayLevels[i + 1])
+                       || (pixelBuffer[k + 2] == grayLevels[i + 1] && i == numberGrayLevels - 2))
+                    {
+                        if (pixelBuffer[k + 2] <= grayThreshold[i])
+                        {
+                            pixelBuffer[k] = grayLevels[i];
+                            pixelBuffer[k + 1] = grayLevels[i];
+                            pixelBuffer[k + 2] = grayLevels[i];
+                        }                       
+                        else
+                        {
+                            pixelBuffer[k] = grayLevels[i + 1];
+                            pixelBuffer[k + 1] = grayLevels[i + 1];
+                            pixelBuffer[k + 2] = grayLevels[i + 1];
+                        }                    
+                    }
+                }
+            }
+        }
+
+    }
 }

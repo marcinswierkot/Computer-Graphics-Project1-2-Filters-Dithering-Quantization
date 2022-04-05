@@ -516,7 +516,7 @@ namespace Project1
         private void AverageDitheringGray_Click(object sender, RoutedEventArgs e)
         {
             int numColors = (int)sliderDitheringGray.Value;
-            AverageDitheringAlgorithm averageDithering = new AverageDitheringAlgorithm(numColors, numColors, numColors);
+            AverageDitheringAlgorithmGray averageDithering = new AverageDitheringAlgorithmGray(numColors);
             FilteredImage = averageDithering.ApplyAverageDithering(FilteredImage);
             FilteredImageConverted = ConvertBitmapToBitmapImage.Convert(FilteredImage);
             Image.Source = FilteredImageConverted;
