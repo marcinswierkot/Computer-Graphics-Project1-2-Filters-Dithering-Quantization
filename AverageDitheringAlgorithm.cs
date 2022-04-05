@@ -224,7 +224,6 @@ namespace Project1
         public void InitialiseColorLevelsGray()
         {
             double splitPointGray = 255 / (numberGrayLevels - 1);
-
             grayLevels.Add(0);
             for (int i = 1; i < numberGrayLevels - 1; i++)
                 grayLevels.Add((byte)(splitPointGray * i));
